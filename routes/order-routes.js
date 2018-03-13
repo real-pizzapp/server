@@ -41,14 +41,32 @@ router.post('/updateOrderWithRestaurant', (req, res) => {
       }));
 });
 
-router.get('/getMyOrder', (req, res) => {
+router.get('/getMyOrder/:id', (req, res) => {
   const userId = res.locals.user._id;
 
-  Order.find({ user: userId }).sort().limit(1)
+  Order.find({ user: userId }).sort({ created_at: -1 }).limit(1)
     .populate('user restaurant dishes')
-    .then(myOrder => {
-      console.log(myOrder)
-      res.status(200).json(myOrder)})
+    .then(myOrder => res.status(200).json(myOrder))
+    .catch(e =>
+      res.status(500).json({
+        error: e.message,
+      }));
+});
+
+router.get('/getAllOrders', (req, res, next) => {
+// traer los pedidos de un restaurante en concreto
+  Order.find({})
+    .then(allOrders => res.status(200).json(allOrders))
+    .catch(e =>
+      res.status(500).json({
+        error: e.message,
+      }));
+});
+
+router.get('/getAllOrders/:id', (req, res, next) => {
+  Order.findById(req.params.id)
+    .populate('user restaurant')
+    .then(singleOrder => res.status(200).json(singleOrder))
     .catch(e =>
       res.status(500).json({
         error: e.message,
