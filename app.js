@@ -64,9 +64,9 @@ app.use('/api/restaurant', restaurant);
 app.use('/api/order', order);
 app.use('/api/address', address);
 
-app.use((req, res) => {
-  res.sendfile(`${__dirname}/public/index.html`);
-});
+// app.use((req, res) => {
+//   res.sendfile(`${__dirname}/public/index.html`);
+// });
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {

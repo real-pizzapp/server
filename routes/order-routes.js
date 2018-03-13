@@ -54,7 +54,6 @@ router.get('/getMyOrder/:id', (req, res) => {
 });
 
 router.get('/getAllOrders', (req, res, next) => {
-// traer los pedidos de un restaurante en concreto
   Order.find({})
     .then(allOrders => res.status(200).json(allOrders))
     .catch(e =>
@@ -67,6 +66,18 @@ router.get('/getAllOrders/:id', (req, res, next) => {
   Order.findById(req.params.id)
     .populate('user restaurant')
     .then(singleOrder => res.status(200).json(singleOrder))
+    .catch(e =>
+      res.status(500).json({
+        error: e.message,
+      }));
+});
+
+router.post('/uptadeOrderStatus/:id', (req, res, next) => {
+  console.log('entro en la ruta');
+  const newStatus = req.body.orderStatus;
+
+  Order.findByIdAndUpdate(req.params.id, { status: newStatus }, { new: true })
+    .then(updatedOrderStatus => res.status(200).json(updatedOrderStatus))
     .catch(e =>
       res.status(500).json({
         error: e.message,
