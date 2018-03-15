@@ -72,11 +72,10 @@ router.get('/getAllOrders/:id', (req, res, next) => {
       }));
 });
 
-router.post('/uptadeOrderStatus/:id', (req, res, next) => {
-  console.log('entro en la ruta');
+router.patch('/uptadeOrderStatus/:id', (req, res, next) => {
   const newStatus = req.body.orderStatus;
 
-  Order.findByIdAndUpdate(req.params.id, { status: newStatus }, { new: true })
+  Order.findByIdAndUpdate(req.params.id, { $set: { status: newStatus } }, { upsert: true, new: true })
     .then(updatedOrderStatus => res.status(200).json(updatedOrderStatus))
     .catch(e =>
       res.status(500).json({
