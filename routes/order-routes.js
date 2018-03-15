@@ -3,9 +3,6 @@ const express = require('express');
 
 const router = express.Router();
 
-router.get('/show', (req, res) => {
-  console.log('entro');
-});
 
 router.post('/createOrder', (req, res) => {
   const user = res.locals.user._id;
@@ -21,29 +18,27 @@ router.post('/createOrder', (req, res) => {
   const order = new Order(initialOrderData);
   order
     .save()
-    .then(createdInitialOrder => res.status(200).json(createdInitialOrder))
+    .then((createdInitialOrder) => {
+      res.status(200).json(createdInitialOrder);
+    })
     .catch(() => res.status(500));
 });
 
-router.post('/updateOrderWithRestaurant', (req, res) => {
-  const { userId } = req.body;
-  const { restaurantId } = req.body;
-
-  Order.update(
-    { user: userId },
-    { $set: { restaurant: restaurantId } },
-    { new: true },
-  )
-    .then(updatedOrder => res.status(200).json(updatedOrder))
+router.patch('/updateOrderWithRestaurant/:id', (req, res) => {
+  const  orderId  = req.params.id;
+  const  restaurant  = req.body.restaurantId;
+  Order.findByIdAndUpdate(orderId, { $set : { restaurant } }, { new: true })
+    .then((updatedOrder) => {
+      res.status(200).json(updatedOrder);
+    })
     .catch(e =>
       res.status(500).json({
         error: e.mesesage,
       }));
 });
 
-router.get('/getMyOrder/:id', (req, res) => {
+router.get('/getMyOrder', (req, res) => {
   const userId = res.locals.user._id;
-
   Order.find({ user: userId }).sort({ created_at: -1 }).limit(1)
     .populate('user restaurant dishes')
     .then(myOrder => res.status(200).json(myOrder))
