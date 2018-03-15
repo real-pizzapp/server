@@ -76,10 +76,11 @@ authRoutes.get('/logout', (req, res) => {
 
 authRoutes.get('/loggedin', (req, res) => {
   if (req.isAuthenticated()) {
-    res.status(200).json(req.user);
-    return;
+    // res.status(200).json(req.user);
+    return true;
   }
-  res.status(403).json({ message: 'Unauthorized' });
+  // res.status(403).json({ message: 'Unauthorized' });
+  return false;
 });
 
 
