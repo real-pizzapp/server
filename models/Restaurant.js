@@ -12,14 +12,15 @@ const restaurantSchema = new Schema(
     peperonniPrice: Number,
     totalPriceOfOrder: Number,
     postalCodesServedto: Array,
-    location: { type: { type: String }, coordinates: [Number] },
+    telephoneNumber: Number,
+    // location: { type: { type: String }, coordinates: [Number] },
   },
   {
     timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' },
   },
 );
 
-restaurantSchema.index({ location: '2dsphere' });
+// restaurantSchema.index({ location: '2dsphere' });
 
 const Restaurant = mongoose.model('Restaurant', restaurantSchema);
 module.exports = Restaurant;

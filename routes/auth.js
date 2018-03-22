@@ -81,5 +81,15 @@ authRoutes.get('/loggedin', (req, res) => {
   res.status(403).json({ message: 'Unauthorized' });
 });
 
+// authRoutes.post('/recoverPassword', (req, res) => {
+//   let newPassword = Array(10).fill(1);
+//   newPassword = newPassword.map((e) => {
+//     return String.fromCharCode(Math.floor(Math.random() * 10));
+//   }).join();
+//   console.log(newPassword);
+//   User.findOne({ username: req.body.username })
+//     .then(user => res.json(user));
+// });
+
 
 module.exports = authRoutes;
