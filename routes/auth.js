@@ -85,7 +85,9 @@ authRoutes.get('/loggedin', (req, res) => {
 
 authRoutes.post('/sendEmail', (req, res) => {
   const { email } = req.body;
-  const url = 'http://localhost:8100/ionic-lab';
+  const salt     = bcrypt.genSaltSync(10);
+  const hashEmail = bcrypt.hashSync(email, salt);
+  const url = 'http://localhost:8100/';
   User.findOne({ username: email })
     .then((foundUser) => {
       console.log('encontrado este usuario =========>')
@@ -103,7 +105,7 @@ authRoutes.post('/sendEmail', (req, res) => {
           from: 'pizzappcompany@gmail.com',
           to: email, // list of receivers
           subject: 'Password ', // Subject line
-          html: `<p>Por favor, para restablecer tu contraseña, haz click en el siguiente link: <a>${url}</a> </p>`,
+          html: `<p>Por favor, para restablecer tu contraseña, haz click en el siguiente link: <a>${url}${hashEmail}</a> </p>`,
         };
 
 
