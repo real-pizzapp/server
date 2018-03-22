@@ -2,6 +2,7 @@ const express = require('express');
 const passport = require('passport');
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
+const nodemailer = require('nodemailer');
 
 const authRoutes = express.Router();
 
@@ -79,6 +80,38 @@ authRoutes.get('/loggedin', (req, res) => {
     res.status(200).json(req.user);
   }
   res.status(403).json({ message: 'Unauthorized' });
+});
+
+
+authRoutes.post('/sendEmail', (req, res) => {
+  console.log('entro en el back');
+  console.log(req.body);
+  const { email } = req.body;
+  User.findOne({ username: email })
+    .then((foundUser) => {
+      console.log('hago la busqueda y encuentro: ');
+      console.log(foundUser);
+      // if (foundUser !== undefined) {
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'pizzappcompany@gmail.com',
+          pass: 'Pizzappcompany123',
+        },
+      });
+
+      const mailOptions = {
+        from: 'pizzappcompany@gmail.com', // sender address
+        to: email, // list of receivers
+        subject: 'Subject of your email', // Subject line
+        html: '<p>PROBANDOLO</p>', // plain text body
+      };
+      // }
+
+      transporter.sendMail(mailOptions, (err, info) => {
+        if (err) { console.log(err); } else { console.log(info); }
+      });
+    });
 });
 
 // authRoutes.post('/recoverPassword', (req, res) => {

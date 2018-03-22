@@ -38,7 +38,7 @@ router.post('/sendRestInfo', (req, res) => {
   restaurant
     .save()
     .then(savedRest => res.status(200).json(savedRest))
-    .catch((e) =>
+    .catch(e =>
       res.status(500).json(e));
 });
 
