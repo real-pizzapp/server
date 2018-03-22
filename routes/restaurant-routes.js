@@ -38,10 +38,8 @@ router.post('/sendRestInfo', (req, res) => {
   restaurant
     .save()
     .then(savedRest => res.status(200).json(savedRest))
-    .catch(e =>
-      res.status(500).json({
-        error: e.mesesage,
-      }));
+    .catch((e) =>
+      res.status(500).json(e));
 });
 
 router.post('/create', (req, res) => {
