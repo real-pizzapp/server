@@ -84,33 +84,37 @@ authRoutes.get('/loggedin', (req, res) => {
 
 
 authRoutes.post('/sendEmail', (req, res) => {
-  console.log('entro en el back');
-  console.log(req.body);
   const { email } = req.body;
+  const url = 'http://localhost:8100/ionic-lab';
   User.findOne({ username: email })
     .then((foundUser) => {
-      console.log('hago la busqueda y encuentro: ');
-      console.log(foundUser);
-      // if (foundUser !== undefined) {
-      const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        auth: {
-          user: 'pizzappcompany@gmail.com',
-          pass: 'Pizzappcompany123',
-        },
-      });
+      console.log('encontrado este usuario =========>')
+      console.log(foundUser)
+      if (foundUser !== null) {
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'pizzappcompany@gmail.com',
+            pass: 'Pizzappcompany123',
+          },
+        });
 
-      const mailOptions = {
-        from: 'pizzappcompany@gmail.com', // sender address
-        to: email, // list of receivers
-        subject: 'Subject of your email', // Subject line
-        html: '<p>PROBANDOLO</p>', // plain text body
-      };
-      // }
+        const mailOptions = {
+          from: 'pizzappcompany@gmail.com',
+          to: email, // list of receivers
+          subject: 'Password ', // Subject line
+          html: `<p>Por favor, para restablecer tu contraseña, haz click en el siguiente link: <a>${url}</a> </p>`,
+        };
 
-      transporter.sendMail(mailOptions, (err, info) => {
-        if (err) { console.log(err); } else { console.log(info); }
-      });
+
+        transporter.sendMail(mailOptions, (err, info) => {
+          if (err) { console.log(err); } else { console.log(info); }
+        });
+        res.status(200).json({ success: 'email enviado con exito' });
+      } else {
+        console.log('entro aqui porque no hay email');
+        res.status(200).json({ error: 'no hay un email asociado' });
+      }
     });
 });
 
