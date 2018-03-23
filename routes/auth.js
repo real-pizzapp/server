@@ -8,7 +8,6 @@ const authRoutes = express.Router();
 
 authRoutes.post('/signup', (req, res) => {
   const { username, password } = req.body;
-
   if (!username || !password) {
     res.status(400).json({ message: 'Provide username and password' });
     return;
@@ -47,24 +46,15 @@ authRoutes.post('/signup', (req, res) => {
 
 
 authRoutes.post('/login', (req, res, next) => {
-  passport.authenticate('local', (err, theUser, failureDetails) => {
-    if (err) {
-      res.status(500).json({ message: 'Something went wrong' });
-      return;
+  passport.authenticate('local', (err, user, failureDetails) => {
+    if (err) { return res.status(500).json({ message: 'Something went wrong' }); }
+
+    if (!user) {
+      return res.status(401).json(failureDetails);
     }
 
-    if (!theUser) {
-      res.status(401).json(failureDetails);
-      return;
-    }
-
-    req.login(theUser, (error) => {
-      if (error) {
-        res.status(500).json({ message: 'Something went wrong' });
-        return;
-      }
-
-      // We are now logged in (notice req.user)
+    req.login(user, (err) => {
+      if (err) { return res.status(500).json({ message: 'Something went wrong' }); }
       res.status(200).json(req.user);
     });
   })(req, res, next);
@@ -85,13 +75,19 @@ authRoutes.get('/loggedin', (req, res) => {
 
 authRoutes.post('/sendEmail', (req, res) => {
   const { email } = req.body;
+  //  generate random 5-letter word
+  const randomWord = (function makeid() {
+    let text = '';
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    for (let i = 0; i < 5; i++) { text += possible.charAt(Math.floor(Math.random() * possible.length)); }
+    return text;
+  }());
+  //  hash random word
   const salt     = bcrypt.genSaltSync(10);
-  const hashEmail = bcrypt.hashSync(email, salt);
-  const url = 'http://localhost:8100/';
-  User.findOne({ username: email })
+  const hashEmail = bcrypt.hashSync(randomWord, salt);
+
+  User.findOneAndUpdate({ username: email }, { $set : { password: hashEmail } }, { new: true })
     .then((foundUser) => {
-      console.log('encontrado este usuario =========>')
-      console.log(foundUser)
       if (foundUser !== null) {
         const transporter = nodemailer.createTransport({
           service: 'gmail',
@@ -104,17 +100,15 @@ authRoutes.post('/sendEmail', (req, res) => {
         const mailOptions = {
           from: 'pizzappcompany@gmail.com',
           to: email, // list of receivers
-          subject: 'Password ', // Subject line
-          html: `<p>Por favor, para restablecer tu contraseña, haz click en el siguiente link: <a>${url}${hashEmail}</a> </p>`,
+          subject: 'NUEVA CONTRASEÑA', // Subject line
+          html: `<p>Tu nueva contraseña para el email ${email} es ${randomWord}. Por cuestiones de seguridad, recomendamos que la cambies en cuanto inicies sesión<p>`,
         };
-
 
         transporter.sendMail(mailOptions, (err, info) => {
           if (err) { console.log(err); } else { console.log(info); }
         });
         res.status(200).json({ success: 'email enviado con exito' });
       } else {
-        console.log('entro aqui porque no hay email');
         res.status(200).json({ error: 'no hay un email asociado' });
       }
     });
