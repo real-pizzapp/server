@@ -1,5 +1,6 @@
 const User = require('../models/User.js');
 const express = require('express');
+const bcrypt = require('bcrypt');
 
 const router = express.Router();
 
@@ -47,14 +48,15 @@ router.post('/create', (req, res) => {
 router.post('/update/:id', (req, res) => {
   const {
     username,
-    email,
     password,
   } = req.body;
 
+  const salt     = bcrypt.genSaltSync(10);
+  const hashPass = bcrypt.hashSync(password, salt);
+
   const update = {
     username,
-    email,
-    password,
+    password: hashPass,
   };
 
   User.findByIdAndUpdate(req.params.id, update, {

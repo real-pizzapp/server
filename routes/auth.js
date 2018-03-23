@@ -53,8 +53,8 @@ authRoutes.post('/login', (req, res, next) => {
       return res.status(401).json(failureDetails);
     }
 
-    req.login(user, (err) => {
-      if (err) { return res.status(500).json({ message: 'Something went wrong' }); }
+    req.login(user, (error) => {
+      if (error) { return res.status(500).json({ message: 'Something went wrong' }); }
       res.status(200).json(req.user);
     });
   })(req, res, next);
@@ -113,16 +113,5 @@ authRoutes.post('/sendEmail', (req, res) => {
       }
     });
 });
-
-// authRoutes.post('/recoverPassword', (req, res) => {
-//   let newPassword = Array(10).fill(1);
-//   newPassword = newPassword.map((e) => {
-//     return String.fromCharCode(Math.floor(Math.random() * 10));
-//   }).join();
-//   console.log(newPassword);
-//   User.findOne({ username: req.body.username })
-//     .then(user => res.json(user));
-// });
-
 
 module.exports = authRoutes;
