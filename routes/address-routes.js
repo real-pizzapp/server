@@ -31,4 +31,14 @@ router.post('/create', (req, res) => {
       }));
 });
 
+router.get('/getAddress/:id', (req, res, next) => {
+  console.log('entro')
+  Address.findById(req.params.id)
+    .then(foundAddress => res.status(200).json(foundAddress))
+    .catch(e =>
+      res.status(500).json({
+        error: e.mesesage,
+      }));
+});
+
 module.exports = router;
