@@ -47,7 +47,6 @@ router.post('/create', (req, res) => {
 
 router.post('/update/:id', (req, res) => {
   let update;
-  
   if (req.body.info.email) {
     username = req.body.info.email;
     update = {
