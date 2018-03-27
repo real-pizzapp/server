@@ -6,6 +6,7 @@ const orderSchema = new Schema(
   {
     user: { type: Schema.Types.ObjectId, ref: 'User' },
     restaurant: { type: Schema.Types.ObjectId, ref: 'Restaurant' },
+    address: { type: Schema.Types.ObjectId, ref: 'Address' },
     quantity: Object,
     status: {
       type: String,

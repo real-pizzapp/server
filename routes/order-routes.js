@@ -27,7 +27,8 @@ router.post('/createOrder', (req, res) => {
 router.patch('/updateOrderWithRestaurant/:id', (req, res) => {
   const  orderId  = req.params.id;
   const  restaurant  = req.body.restaurantId;
-  Order.findByIdAndUpdate(orderId, { $set : { restaurant } }, { new: true })
+  const address = req.body.pickedAddress;
+  Order.findByIdAndUpdate(orderId, { $set : { restaurant, address } }, { new: true })
     .then((updatedOrder) => {
       res.status(200).json(updatedOrder);
     })
@@ -40,7 +41,7 @@ router.patch('/updateOrderWithRestaurant/:id', (req, res) => {
 router.get('/getMyOrder', (req, res) => {
   const userId = res.locals.user._id;
   Order.find({ user: userId }).sort({ created_at: -1 }).limit(1)
-    .populate('user restaurant dishes')
+    .populate('user restaurant dishes address')
     .then(myOrder => res.status(200).json(myOrder))
     .catch(e =>
       res.status(500).json({
