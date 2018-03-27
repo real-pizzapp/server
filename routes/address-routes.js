@@ -4,7 +4,6 @@ const express = require('express');
 
 const router = express.Router();
 
-
 router.post('/create', (req, res) => {
   const { userId, streetName, floor, postalCode, coordinates } = req.body;
   const addressData = {
@@ -55,7 +54,7 @@ router.post('/addAddress', (req, res, next) => {
       res.status(500).json({
         error: e.mesesage,
       }));
-})
+});
 
 router.get('/getAddress/:id', (req, res, next) => {
   Address.findById(req.params.id)
