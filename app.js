@@ -16,20 +16,21 @@ const address = require('./routes/address-routes');
 
 const app = express();
 
-mongoose.connect(process.env.DBURL).then(() => {
-  console.log(`Connected to DB: ${process.env.DBURL}`);
+mongoose.connect(process.env.MONGO_URI).then(() => {
+  console.log(`Connected to DB: ${process.env.MONGO_URI}`);
 });
 
-const whitelist = ['http://localhost:8100'];
-const corsOptions = {
-  origin(origin, callback) {
-    const originIsWhitelisted = whitelist.indexOf(origin) !== -1;
-    callback(null, originIsWhitelisted);
-  },
-  credentials: true,
-};
+// const whitelist = ['http://localhost:8100'];
+// const corsOptions = {
+//   origin(origin, callback) {
+//     const originIsWhitelisted = whitelist.indexOf(origin) !== -1;
+//     callback(null, originIsWhitelisted);
+//   },
+//   credentials: true,
+// };
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+app.use(cors());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

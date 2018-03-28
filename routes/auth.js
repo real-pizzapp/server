@@ -93,7 +93,7 @@ authRoutes.post('/sendEmail', (req, res) => {
           service: 'gmail',
           auth: {
             user: 'pizzappcompany@gmail.com',
-            pass: 'Pizzappcompany123',
+            pass: process.env.GMAILPW,
           },
         });
 
