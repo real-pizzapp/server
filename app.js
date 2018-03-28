@@ -8,7 +8,7 @@ const mongoose = require('mongoose');
 const auth = require('./routes/auth');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
-const cors = require('cors');
+// const cors = require('cors');
 const user = require('./routes/user-routes');
 const restaurant = require('./routes/restaurant-routes');
 const order = require('./routes/order-routes');
@@ -19,7 +19,11 @@ const app = express();
 mongoose.connect(process.env.MONGO_URI).then(() => {
   console.log(`Connected to DB: ${process.env.MONGO_URI}`);
 });
-
+app.use(function(req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
 // const whitelist = ['http://localhost:8100'];
 // const corsOptions = {
 //   origin(origin, callback) {
@@ -30,7 +34,7 @@ mongoose.connect(process.env.MONGO_URI).then(() => {
 // };
 
 // app.use(cors(corsOptions));
-app.use(cors());
+// app.use(cors());
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
