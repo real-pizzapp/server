@@ -5,30 +5,37 @@ const express = require('express');
 
 const router = express.Router();
 
-router.get('/getNearRestaurants', (req, res) => {
-  const userId = res.locals.user._id;
-  Order.find({ user: userId }).then((infoSobrePedido) => {
-    const { quantity } = infoSobrePedido[0];
-    User.findById(userId)
-      .populate('address')
-      .then((user) => {
-        Restaurant.find({ postalCodesServedto: { $in: [user.address[0].postalCode.toString()] } }).limit(3).then((restaurantsWhichServeMe) => {
-          const restaurants = restaurantsWhichServeMe.map((singleRestaurant) => {
-            const totalJamonYQueso = singleRestaurant.jamonYQuesoPrice * quantity.jamonYQuesoPrice || 0;
-            const totalCuatroQuesos = singleRestaurant.cuatroQuesosPrice * quantity.cuatroQuesosPrice || 0;
-            const totalBarbacoa = singleRestaurant.barbacoaPrice * quantity.barbacoaPrice || 0;
-            const totalPepperoni = singleRestaurant.peperonniPrice * quantity.peperonniPrice || 0;
-            const orderTotalPrice = totalJamonYQueso + totalCuatroQuesos + totalBarbacoa + totalPepperoni;
-            const orderInRestaurant = singleRestaurant;
-            orderInRestaurant.totalPriceOfOrder = orderTotalPrice;
-            return orderInRestaurant;
-          });
-          res.status(200).json(restaurants);
-        })
-          .catch(e => res.status(500).json(e));
-      });
-  });
+router.get('/getNearRestaurants', (req, res, next) => {
+  Restaurant.find()
+    .then(foundRestaurants => res.status(200).json(foundRestaurants))
+    .catch(e =>
+      res.status(500).json(e));
 });
+
+// router.get('/getNearRestaurants', (req, res) => {
+//   const userId = res.locals.user._id;
+//   Order.find({ user: userId }).then((infoSobrePedido) => {
+//     const { quantity } = infoSobrePedido[0];
+//     User.findById(userId)
+//       .populate('address')
+//       .then((user) => {
+//         Restaurant.find({ postalCodesServedto: { $in: [user.address[0].postalCode.toString()] } }).limit(3).then((restaurantsWhichServeMe) => {
+//           const restaurants = restaurantsWhichServeMe.map((singleRestaurant) => {
+//             const totalJamonYQueso = singleRestaurant.jamonYQuesoPrice * quantity.jamonYQuesoPrice || 0;
+//             const totalCuatroQuesos = singleRestaurant.cuatroQuesosPrice * quantity.cuatroQuesosPrice || 0;
+//             const totalBarbacoa = singleRestaurant.barbacoaPrice * quantity.barbacoaPrice || 0;
+//             const totalPepperoni = singleRestaurant.peperonniPrice * quantity.peperonniPrice || 0;
+//             const orderTotalPrice = totalJamonYQueso + totalCuatroQuesos + totalBarbacoa + totalPepperoni;
+//             const orderInRestaurant = singleRestaurant;
+//             orderInRestaurant.totalPriceOfOrder = orderTotalPrice;
+//             return orderInRestaurant;
+//           });
+//           res.status(200).json(restaurants);
+//         })
+//           .catch(e => res.status(500).json(e));
+//       });
+//   });
+// });
 
 router.post('/sendRestInfo', (req, res) => {
   const { name, image, jamonYQuesoPrice, cuatroQuesosPrice, barbacoaPrice, peperonniPrice } = req.body;
