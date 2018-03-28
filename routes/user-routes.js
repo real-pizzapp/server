@@ -3,7 +3,6 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 
 const router = express.Router();
-
 router.get('/show', (req, res) => {
   User.find()
     .then(users => res.status(200).json(users))
