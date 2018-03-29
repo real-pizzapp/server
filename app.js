@@ -19,21 +19,23 @@ const app = express();
 mongoose.connect(process.env.MONGO_URI).then(() => {
   console.log(`Connected to DB: ${process.env.MONGO_URI}`);
 });
-app.use(function(req, res, next) {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  next();
-});
-// const whitelist = ['http://localhost:8100'];
-// const corsOptions = {
-//   origin(origin, callback) {
-//     const originIsWhitelisted = whitelist.indexOf(origin) !== -1;
-//     callback(null, originIsWhitelisted);
-//   },
-//   credentials: true,
-// };
 
-// app.use(cors(corsOptions));
+
+// app.use(function(req, res, next) {
+//     res.header('Access-Control-Allow-Origin', '*');
+//     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+//     next();
+// });
+const whitelist = ['http://localhost:8100'];
+const corsOptions = {
+  origin(origin, callback) {
+    const originIsWhitelisted = whitelist.indexOf(origin) !== -1;
+    callback(null, originIsWhitelisted);
+  },
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 // app.use(cors());
 
 // view engine setup
